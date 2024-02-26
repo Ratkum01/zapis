@@ -17,12 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from authentication.views import UserRegistrationView, UserLoginView, UserLogoutView
+from authentication.views import PeopleRegistrationView, PeopleLoginView, PeopleLogoutView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     # path('api-auth/', include('rest_framework.urls')),
-    path('api/auth/register/', UserRegistrationView.as_view(), name='user-registration'),
-    path('api/auth/login/', UserLoginView.as_view(), name='user-login'),
-    path('api/auth/logout/', UserLogoutView.as_view(), name='user-logout'),
+    path('api/auth/register/', PeopleRegistrationView.as_view(), name='people-registration'),
+    path('api/auth/login/', PeopleLoginView.as_view(), name='people-login'),
+    path('api/auth/logout/', PeopleLogoutView.as_view(), name='people-logout'),
 ]

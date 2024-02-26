@@ -1,12 +1,15 @@
-from django.contrib.auth.models import AbstractUser
-from django.db import models
 
-# Create your models here.
-class User(AbstractUser):
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+from django.conf import settings
+from rest_framework.authtoken.models import Token
+
+
+class People(AbstractUser):
     ROLE_CHOICES = (
         ('administrator', 'Administrator'),
         ('master', 'Master'),
-        ('user', 'User'),
+        ('user', 'user'),
     )
 
     role = models.CharField(max_length=15, choices=ROLE_CHOICES)
