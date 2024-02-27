@@ -1,7 +1,8 @@
 from authentication.models import User
+from authentication.permissions import IsAdminOrReadOnly
 from authentication.serializers import UserSerializer
 from django.contrib.auth import authenticate, login
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -47,3 +48,7 @@ class UserLogoutView(APIView):
         token.delete()
 
         return Response({'detail': 'Successfully logged out.'})
+class UserAPIList(generics.ListCreateAPIView):
+    queryset=User.objects.all()
+    serializer_class=UserSerializer
+    permission_classes = (IsAdminOrReadOnly, )
