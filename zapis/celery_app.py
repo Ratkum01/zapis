@@ -21,4 +21,5 @@ def debug_task():
     print('Hello from debug_task')
 
 # docker-compose run --rm web-app sh -c "python manage.py shell"
+#docker-compose run --rm web-app sh -c "python manage.py makemigrations"
 # from celery_app import debug_task

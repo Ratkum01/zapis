@@ -21,10 +21,10 @@ from authentication.views import UserRegistrationView, UserLoginView, UserLogout
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('api-auth/', include('rest_framework.urls')),
+    path('api-auth/', include('rest_framework.urls')),
     path('api/auth/register/', UserRegistrationView.as_view(), name='user-registration'),
     path('api/auth/login/', UserLoginView.as_view(), name='user-login'),
     path('api/auth/logout/', UserLogoutView.as_view(), name='user-logout'),
     path('api/v1/user/', UserAPIList.as_view()),
-    # Add other URLs here
+    path('api/', include('booking.urls')),
 ]

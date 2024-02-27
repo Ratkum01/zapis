@@ -12,12 +12,22 @@ from rest_framework.permissions import IsAuthenticated
 
 class UserRegistrationView(APIView):
     def post(self, request):
-        serializer = UserSerializer(data=request.data)
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        # Проверяем существует ли пользователь с таким именем
+        user = User.objects.filter(username=username).first()
+        if user:
+            # Если пользователь существует, используем его данные
+            serializer = UserSerializer(instance=user, data=request.data)
+        else:
+            # Если пользователь не существует, создаем нового
+            serializer = UserSerializer(data=request.data)
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class UserLoginView(ObtainAuthToken):
@@ -48,7 +58,8 @@ class UserLogoutView(APIView):
         token.delete()
 
         return Response({'detail': 'Successfully logged out.'})
+
 class UserAPIList(generics.ListCreateAPIView):
-    queryset=User.objects.all()
-    serializer_class=UserSerializer
-    permission_classes = (IsAdminOrReadOnly, )
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAdminOrReadOnly]

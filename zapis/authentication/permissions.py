@@ -13,4 +13,4 @@ class IsAdminOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        return bool(request.user and (request.user.is_staff or request.user.role == 'administrator'))
+        return bool(request.user and (request.user.is_staff or (request.user.role == 'administrator' and request.method == 'POST')))
