@@ -1,13 +1,14 @@
 from rest_framework import serializers
-from authentication.models import People
+
+from authentication.models import User
 
 
-class PeopleSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = People
+        model = User
         fields = ['username', 'email', 'role', 'password']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        people = People.objects.create_user(**validated_data)
-        return people
+        user = User.objects.create_user(**validated_data)
+        return user

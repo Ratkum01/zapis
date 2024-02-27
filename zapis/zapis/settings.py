@@ -148,4 +148,4 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
 }
-AUTH_USER_MODEL = 'authentication.People'
+AUTH_USER_MODEL = 'authentication.User'
