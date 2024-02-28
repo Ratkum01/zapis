@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from rest_framework.authtoken.models import Token
-from authentication.task import  mock_otp_verification
 
 class User(AbstractUser):
     ROLE_CHOICES = (

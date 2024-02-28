@@ -25,7 +25,3 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'password', 'first_name', 'last_name', 'email', 'is_staff')
         depth = 1
-
-    # def create(self, validated_data):
-    #     # Ничего не делаем здесь, чтобы сериализатор не создавал новых пользователей
-    #     pass

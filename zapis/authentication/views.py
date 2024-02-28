@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
-from authentication.task import  mock_otp_verification
+from authentication.task import  create_and_save_otp , verify_otp
 import os
 
 class UserRegistrationView(APIView):
@@ -17,8 +17,8 @@ class UserRegistrationView(APIView):
         if serializer.is_valid():
             serializer.save()
             phone_number = serializer.validated_data.get('phone_number')
-            # Создаем OTP для нового пользователя, передавая пустую строку в качестве OTP
-            mock_otp_verification.delay(phone_number, '')  # Передаем пустую строку в качестве OTP
+            # Создаем и сохраняем OTP для нового пользователя, передавая пустую строку в качестве OTP
+            create_and_save_otp.delay(phone_number, '')  # Передаем пустую строку в качестве OTP
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -26,9 +26,8 @@ class OTPVerificationView(APIView):
     def post(self, request):
         phone_number = request.data.get('phone_number')
         provided_otp = request.data.get('otp')
-        # Подтверждаем OTP, передавая номер телефона и OTP в функцию
-        # mock_otp_verification
-        mock_otp_verification.delay(phone_number, provided_otp)
+        # Проверяем OTP, передавая номер телефона и OTP в функцию verify_otp
+        verify_otp.delay(phone_number, provided_otp)
         return Response({'message': 'OTP verification initiated'}, status=status.HTTP_200_OK)
 
 class UserLoginView(ObtainAuthToken):
