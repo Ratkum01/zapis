@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from authentication.views import UserRegistrationView, UserLoginView, UserLogoutView, UserAPIList
+from authentication.views import UserRegistrationView, UserLoginView, UserLogoutView, UserAPIList, OTPVerificationView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,5 +26,6 @@ urlpatterns = [
     path('api/auth/login/', UserLoginView.as_view(), name='user-login'),
     path('api/auth/logout/', UserLogoutView.as_view(), name='user-logout'),
     path('api/v1/user/', UserAPIList.as_view()),
+    path('api/auth/verify-otp/', OTPVerificationView.as_view(), name='otp-verification'),  # Добавляем путь для проверки OTP
     path('api/', include('booking.urls')),
 ]

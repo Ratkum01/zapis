@@ -1,4 +1,4 @@
-from authentication.models import User
+from authentication.models import User, OTPRecord
 from authentication.permissions import IsAdminOrReadOnly
 from authentication.serializers import UserSerializer
 from django.contrib.auth import authenticate, login
@@ -8,27 +8,28 @@ from rest_framework.views import APIView
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
-
+from authentication.task import  mock_otp_verification
+import os
 
 class UserRegistrationView(APIView):
     def post(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
-
-        # Проверяем существует ли пользователь с таким именем
-        user = User.objects.filter(username=username).first()
-        if user:
-            # Если пользователь существует, используем его данные
-            serializer = UserSerializer(instance=user, data=request.data)
-        else:
-            # Если пользователь не существует, создаем нового
-            serializer = UserSerializer(data=request.data)
-
+        serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            phone_number = serializer.validated_data.get('phone_number')
+            # Создаем OTP для нового пользователя, передавая пустую строку в качестве OTP
+            mock_otp_verification.delay(phone_number, '')  # Передаем пустую строку в качестве OTP
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class OTPVerificationView(APIView):
+    def post(self, request):
+        phone_number = request.data.get('phone_number')
+        provided_otp = request.data.get('otp')
+        # Подтверждаем OTP, передавая номер телефона и OTP в функцию
+        # mock_otp_verification
+        mock_otp_verification.delay(phone_number, provided_otp)
+        return Response({'message': 'OTP verification initiated'}, status=status.HTTP_200_OK)
 
 class UserLoginView(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
@@ -46,13 +47,10 @@ class UserLoginView(ObtainAuthToken):
         else:
             return Response({'message': 'Invalid username or password'}, status=status.HTTP_401_UNAUTHORIZED)
 
-
-
 class UserLogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        print(request.headers)
         token_key = request.auth.key
         token = Token.objects.get(key=token_key)
         token.delete()
