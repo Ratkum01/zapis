@@ -7,11 +7,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'zapis.settings')
 
 app = Celery('zapis')
 app.config_from_object('django.conf:settings')
-
-# Устанавливаем broker_url
 app.conf.broker_url = settings.CELERY_BROKER_URL
-
-# Автоматически обнаруживаем задачи
 app.autodiscover_tasks()
 
 

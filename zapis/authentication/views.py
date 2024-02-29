@@ -17,8 +17,7 @@ class UserRegistrationView(APIView):
         if serializer.is_valid():
             serializer.save()
             phone_number = serializer.validated_data.get('phone_number')
-            # Создаем и сохраняем OTP для нового пользователя, передавая пустую строку в качестве OTP
-            create_and_save_otp.delay(phone_number, '')  # Передаем пустую строку в качестве OTP
+            create_and_save_otp.delay(phone_number, '')
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -26,7 +25,6 @@ class OTPVerificationView(APIView):
     def post(self, request):
         phone_number = request.data.get('phone_number')
         provided_otp = request.data.get('otp')
-        # Проверяем OTP, передавая номер телефона и OTP в функцию verify_otp
         verify_otp.delay(phone_number, provided_otp)
         return Response({'message': 'OTP verification initiated'}, status=status.HTTP_200_OK)
 
@@ -40,7 +38,7 @@ class UserLoginView(ObtainAuthToken):
             login(request, user)
             token, created = Token.objects.get_or_create(user=user)
             if created:
-                token.delete()  # Delete the token if it was already created
+                token.delete()
                 token = Token.objects.create(user=user)
             return Response({'token': token.key, 'username': user.username, 'role': user.role})
         else:
